@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
-import java.time.LocalTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private data class AppItem(val emoji: String, val name: String, val color: Color)
@@ -116,7 +116,7 @@ fun HomeScreen(accent: Color, modifier: Modifier = Modifier) {
             Spacer(Modifier.height(76.dp))
 
             Text(
-                text = now.format(timeFormatter),
+                text = now.toLocalTime().format(timeFormatter),
                 color = Color.White,
                 fontSize = 56.sp,
                 fontWeight = FontWeight.Light,
@@ -333,11 +333,11 @@ private fun GlassCard(
 }
 
 @Composable
-private fun rememberClock(): State<LocalTime> {
-    val state = remember { mutableStateOf(LocalTime.now()) }
+private fun rememberClock(): State<LocalDateTime> {
+    val state = remember { mutableStateOf(LocalDateTime.now()) }
     LaunchedEffect(Unit) {
         while (true) {
-            state.value = LocalTime.now()
+            state.value = LocalDateTime.now()
             delay(1_000L)
         }
     }
