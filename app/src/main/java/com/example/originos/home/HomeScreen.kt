@@ -21,10 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,8 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private data class AppItem(val emoji: String, val name: String, val color: Color)
@@ -330,16 +325,4 @@ private fun GlassCard(
             .border(1.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(24.dp)),
         content = content,
     )
-}
-
-@Composable
-private fun rememberClock(): State<LocalDateTime> {
-    val state = remember { mutableStateOf(LocalDateTime.now()) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            state.value = LocalDateTime.now()
-            delay(1_000L)
-        }
-    }
-    return state
 }

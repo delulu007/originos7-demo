@@ -119,6 +119,15 @@ fun IslandLabSheet(viewModel: IslandViewModel) {
             ) {
                 viewModel.dismiss()
             }
+            Spacer(Modifier.height(12.dp))
+            LabAction(
+                emoji = "🔒",
+                title = "Lock screen",
+                subtitle = "Back to the OriginOS lock screen",
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                viewModel.lock()
+            }
 
             Spacer(Modifier.height(24.dp))
             Text(

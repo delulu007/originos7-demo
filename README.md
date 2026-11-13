@@ -20,13 +20,22 @@ notification access, and no vivo hardware required — it runs on any Android 8.
 | **Charging** | 44W FlashCharge style card with battery percentage and fill animation. |
 | **Morph animation** | Spring-based width/height/corner animation between pill and card. |
 | **Home screen stage** | Mock OriginOS home screen: wallpaper glow, clock, weather/steps widgets, app grid, dock. |
-| **Island Lab** | Bottom sheet to trigger each activity, dismiss the island, and switch accent colors. |
+| **Lock screen** | Big clock, date, weather, notification cards, swipe-up-to-unlock. |
+| **Control center** | Swipe down from the status bar: quick toggles, brightness/volume sliders, media card. |
+| **Island Lab** | Bottom sheet to trigger each activity, dismiss or lock, and switch accent colors. |
 
-## Screens
+## Screens and gestures
 
+- **Lock screen** — shown on launch. Swipe up or tap the hint to unlock; the Island Lab's
+  **Lock screen** action returns to it.
 - **Home** — live clock, date, weather and step widgets, 12-app grid, glass dock, page dots.
 - **Island** — expands automatically after an activity is triggered, or tap the pill to toggle.
+- **Control Center** — swipe down along the status bar, or tap the small chevron in the
+  top-left corner. Tap the scrim or the close button to dismiss.
 - **Island Lab** — tap the floating **Island Lab** button above the dock.
+
+All toggles, sliders, notifications and charging values are local demo state; nothing
+touches real system settings.
 
 ## Build the APK
 
@@ -64,10 +73,13 @@ app/src/main/java/com/example/originos/
 │   ├── IslandContent.kt         # Idle / Music / Timer / Call / Charging models
 │   └── OriginIsland.kt          # the morphing island UI
 ├── home/
+│   ├── Clock.kt                 # shared once-per-second clock
 │   └── HomeScreen.kt            # mock OriginOS home screen
 └── ui/
     ├── DemoRoot.kt              # wallpaper + island overlay + lab button
-    ├── IslandLabSheet.kt        # activity triggers and accent picker
+    ├── ControlCenter.kt         # swipe-down panel, toggles, sliders, media card
+    ├── LockScreen.kt            # lock screen with swipe-up-to-unlock
+    ├── IslandLabSheet.kt        # activity triggers, lock action and accent picker
     └── theme/Theme.kt           # dark Material 3 theme
 ```
 

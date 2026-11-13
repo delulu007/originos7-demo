@@ -1,5 +1,10 @@
 package com.example.originos.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +30,19 @@ fun DemoRoot(viewModel: IslandViewModel) {
             .background(Color(0xFF050507)),
     ) {
         HomeScreen(accent = accent)
+
+        // Swipe down anywhere along the status bar to pull the control center.
+        ControlCenterSwipeArea(
+            onOpen = viewModel::openControlCenter,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
+        ControlCenterHandle(
+            onOpen = viewModel::openControlCenter,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .statusBarsPadding()
+                .padding(start = 16.dp, top = 6.dp),
+        )
 
         OriginIsland(
             content = viewModel.content,
@@ -52,6 +70,23 @@ fun DemoRoot(viewModel: IslandViewModel) {
                 .navigationBarsPadding()
                 .padding(end = 20.dp, bottom = 116.dp),
         )
+
+        ControlCenter(
+            viewModel = viewModel,
+            accent = accent,
+            onClose = viewModel::closeControlCenter,
+        )
+
+        AnimatedVisibility(
+            visible = viewModel.locked,
+            enter = fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { -it / 3 }) + fadeOut(tween(260)),
+        ) {
+            LockScreen(
+                accent = accent,
+                onUnlock = viewModel::unlock,
+            )
+        }
     }
 
     if (viewModel.panelOpen) {

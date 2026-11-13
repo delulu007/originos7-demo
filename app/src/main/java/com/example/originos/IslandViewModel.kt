@@ -1,6 +1,7 @@
 package com.example.originos
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -30,6 +31,21 @@ class IslandViewModel : ViewModel() {
         private set
 
     var panelOpen by mutableStateOf(false)
+        private set
+
+    var locked by mutableStateOf(true)
+        private set
+
+    var controlCenterOpen by mutableStateOf(false)
+        private set
+
+    var brightness by mutableFloatStateOf(0.72f)
+        private set
+
+    var volume by mutableFloatStateOf(0.45f)
+        private set
+
+    var enabledToggles by mutableStateOf(setOf("wifi", "mobile", "rotate"))
         private set
 
     private var ticker: Job? = null
@@ -117,6 +133,43 @@ class IslandViewModel : ViewModel() {
 
     fun closePanel() {
         panelOpen = false
+    }
+
+    fun unlock() {
+        locked = false
+    }
+
+    fun lock() {
+        panelOpen = false
+        controlCenterOpen = false
+        expanded = false
+        locked = true
+    }
+
+    fun openControlCenter() {
+        if (locked) return
+        panelOpen = false
+        controlCenterOpen = true
+    }
+
+    fun closeControlCenter() {
+        controlCenterOpen = false
+    }
+
+    fun toggleQuick(key: String) {
+        enabledToggles = if (key in enabledToggles) {
+            enabledToggles - key
+        } else {
+            enabledToggles + key
+        }
+    }
+
+    fun setBrightness(value: Float) {
+        brightness = value
+    }
+
+    fun setVolume(value: Float) {
+        volume = value
     }
 
     fun selectAccent(option: Accent) {
