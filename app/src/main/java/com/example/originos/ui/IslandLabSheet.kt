@@ -112,6 +112,15 @@ fun IslandLabSheet(viewModel: IslandViewModel) {
             }
             Spacer(Modifier.height(12.dp))
             LabAction(
+                emoji = "💬",
+                title = "Message",
+                subtitle = "Incoming chat notification",
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                viewModel.incomingMessage()
+            }
+            Spacer(Modifier.height(12.dp))
+            LabAction(
                 emoji = "✕",
                 title = "Dismiss island",
                 subtitle = "Return to the idle pill",

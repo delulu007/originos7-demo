@@ -89,22 +89,29 @@ fun OriginIsland(
     onResetTimer: () -> Unit,
     onAccept: () -> Unit,
     onDecline: () -> Unit,
+    onReply: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val targetWidth = when {
         expanded -> 336.dp
         content is IslandContent.Call -> 216.dp
+        content is IslandContent.Message -> 206.dp
         content is IslandContent.Music -> 158.dp
         content is IslandContent.Timer -> 126.dp
         content is IslandContent.Charging -> 118.dp
         else -> 92.dp
     }
     val targetHeight = when {
-        !expanded -> if (content is IslandContent.Call) 46.dp else 36.dp
+        !expanded -> when {
+            content is IslandContent.Call -> 46.dp
+            content is IslandContent.Message -> 40.dp
+            else -> 36.dp
+        }
         content is IslandContent.Music -> 174.dp
         content is IslandContent.Timer -> 214.dp
         content is IslandContent.Call -> 230.dp
         content is IslandContent.Charging -> 150.dp
+        content is IslandContent.Message -> 172.dp
         else -> 120.dp
     }
 
@@ -191,6 +198,7 @@ fun OriginIsland(
                         onResetTimer = onResetTimer,
                         onAccept = onAccept,
                         onDecline = onDecline,
+                        onReply = onReply,
                     )
                 } else {
                     CompactIslandContent(
@@ -305,6 +313,40 @@ private fun CompactIslandContent(
                 onClick = onAccept,
             )
         }
+
+        is IslandContent.Message -> Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Avatar(name = content.sender, size = 24.dp, accent = accent)
+            Spacer(Modifier.width(7.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = content.sender,
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = content.text,
+                    color = Color.White.copy(alpha = 0.55f),
+                    fontSize = 9.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            Spacer(Modifier.width(6.dp))
+            Box(
+                Modifier
+                    .size(7.dp)
+                    .clip(CircleShape)
+                    .background(accent),
+            )
+        }
     }
 }
 
@@ -320,6 +362,7 @@ private fun ExpandedIslandContent(
     onResetTimer: () -> Unit,
     onAccept: () -> Unit,
     onDecline: () -> Unit,
+    onReply: () -> Unit,
 ) {
     when (content) {
         IslandContent.Idle -> Unit
@@ -353,6 +396,13 @@ private fun ExpandedIslandContent(
             charging = content,
             accent = accent,
             onCollapse = onCollapse,
+        )
+
+        is IslandContent.Message -> ExpandedMessage(
+            message = content,
+            accent = accent,
+            onCollapse = onCollapse,
+            onReply = onReply,
         )
     }
 }
@@ -699,6 +749,81 @@ private fun ExpandedCharging(
         }
         Spacer(Modifier.height(10.dp))
         ProgressLine(progress = charging.percent / 100f, accent = accent)
+    }
+}
+
+@Composable
+private fun ExpandedMessage(
+    message: IslandContent.Message,
+    accent: Color,
+    onCollapse: () -> Unit,
+    onReply: () -> Unit,
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Avatar(name = message.sender, size = 34.dp, accent = accent)
+            Spacer(Modifier.width(10.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = message.sender,
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = "Message · now",
+                    color = Color.White.copy(alpha = 0.5f),
+                    fontSize = 10.sp,
+                )
+            }
+            CircleAction(
+                size = 26.dp,
+                background = Color.White.copy(alpha = 0.08f),
+                icon = Icons.Rounded.Close,
+                iconTint = Color.White.copy(alpha = 0.8f),
+                onClick = onCollapse,
+            )
+        }
+
+        Spacer(Modifier.height(10.dp))
+        Text(
+            text = message.text,
+            color = Color.White.copy(alpha = 0.88f),
+            fontSize = 12.sp,
+            lineHeight = 16.sp,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Spacer(Modifier.weight(1f))
+        if (message.replied) {
+            Text(
+                text = "Reply sent",
+                color = accent,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        } else {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                PillButton(
+                    label = "Reply",
+                    accent = accent,
+                    onClick = onReply,
+                )
+                PillButton(
+                    label = "Later",
+                    accent = accent,
+                    filled = false,
+                    onClick = onCollapse,
+                )
+            }
+        }
     }
 }
 

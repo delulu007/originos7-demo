@@ -29,6 +29,12 @@ sealed interface IslandContent {
     ) : IslandContent
 
     data class Charging(val percent: Int) : IslandContent
+
+    data class Message(
+        val sender: String,
+        val text: String,
+        val replied: Boolean = false,
+    ) : IslandContent
 }
 
 enum class Accent(val color: Color, val label: String) {

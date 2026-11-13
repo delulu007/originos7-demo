@@ -55,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
@@ -99,7 +100,25 @@ fun ControlCenter(
         enter = fadeIn(tween(200)),
         exit = fadeOut(tween(160)),
     ) {
-        Box(Modifier.fillMaxSize()) {
+        var dragY by remember { mutableFloatStateOf(0f) }
+
+        Box(
+            Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    val threshold = 64.dp.toPx()
+                    detectVerticalDragGestures(
+                        onDragEnd = {
+                            if (dragY < -threshold) onClose() else dragY = 0f
+                        },
+                        onDragCancel = { dragY = 0f },
+                        onVerticalDrag = { change, amount ->
+                            change.consume()
+                            dragY = (dragY + amount).coerceAtMost(0f)
+                        },
+                    )
+                },
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -119,6 +138,7 @@ fun ControlCenter(
                     viewModel = viewModel,
                     accent = accent,
                     onClose = onClose,
+                    dragOffset = dragY,
                 )
             }
         }
@@ -130,12 +150,14 @@ private fun ControlCenterPanel(
     viewModel: IslandViewModel,
     accent: Color,
     onClose: () -> Unit,
+    dragOffset: Float,
 ) {
     val panelInteraction = remember { MutableInteractionSource() }
     val panelShape = RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp)
 
     Column(
         modifier = Modifier
+            .graphicsLayer { translationY = dragOffset }
             .fillMaxWidth()
             .clip(panelShape)
             .background(
@@ -236,6 +258,19 @@ private fun ControlCenterPanel(
                 text = "OriginOS 7",
                 color = Color.White.copy(alpha = 0.28f),
                 fontSize = 10.sp,
+            )
+        }
+
+        Spacer(Modifier.height(14.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Box(
+                Modifier
+                    .size(width = 44.dp, height = 4.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(Color.White.copy(alpha = 0.20f)),
             )
         }
     }

@@ -57,6 +57,7 @@ fun DemoRoot(viewModel: IslandViewModel) {
             onResetTimer = viewModel::resetTimer,
             onAccept = viewModel::acceptCall,
             onDecline = viewModel::declineCall,
+            onReply = viewModel::replyToMessage,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .statusBarsPadding()

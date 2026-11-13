@@ -73,6 +73,7 @@ class IslandViewModel : ViewModel() {
             is IslandContent.Timer -> startTimerTicker()
             is IslandContent.Charging -> startChargingTicker()
             is IslandContent.Call -> if (next.connected) startCallTicker()
+            is IslandContent.Message -> Unit
         }
 
         if (next !is IslandContent.Idle) {
@@ -106,6 +107,20 @@ class IslandViewModel : ViewModel() {
 
     fun charging() {
         launch(IslandContent.Charging(percent = 63))
+    }
+
+    fun incomingMessage() {
+        launch(
+            IslandContent.Message(
+                sender = "Maya Sharma",
+                text = "Are we still on for dinner at 8?",
+            ),
+        )
+    }
+
+    fun replyToMessage() {
+        val message = content as? IslandContent.Message ?: return
+        content = message.copy(replied = true)
     }
 
     fun dismiss() {
