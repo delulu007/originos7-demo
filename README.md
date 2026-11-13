@@ -73,7 +73,7 @@ app/src/main/java/com/example/originos/
 ├── MainActivity.kt              # edge-to-edge Compose host
 ├── IslandViewModel.kt           # island state + simulated media/timer/call ticks
 ├── island/
-│   ├── IslandContent.kt         # Idle / Music / Timer / Call / Charging models
+│   ├── IslandContent.kt         # Idle / Music / Timer / Call / Charging / Message models
 │   └── OriginIsland.kt          # the morphing island UI
 ├── home/
 │   ├── Clock.kt                 # shared once-per-second clock
