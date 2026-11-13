@@ -1,8 +1,8 @@
 package com.example.originos.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -79,7 +79,7 @@ fun DemoRoot(viewModel: IslandViewModel) {
 
         AnimatedVisibility(
             visible = viewModel.locked,
-            enter = fadeIn(),
+            enter = EnterTransition.None,
             exit = slideOutVertically(targetOffsetY = { -it / 3 }) + fadeOut(tween(260)),
         ) {
             LockScreen(
