@@ -58,6 +58,7 @@ fun DemoRoot(viewModel: IslandViewModel) {
             onAccept = viewModel::acceptCall,
             onDecline = viewModel::declineCall,
             onReply = viewModel::replyToMessage,
+            onDismiss = viewModel::dismiss,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .statusBarsPadding()
@@ -85,6 +86,7 @@ fun DemoRoot(viewModel: IslandViewModel) {
         ) {
             LockScreen(
                 accent = accent,
+                unreadMessages = viewModel.unreadMessages,
                 onUnlock = viewModel::unlock,
             )
         }

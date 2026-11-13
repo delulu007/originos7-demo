@@ -48,6 +48,9 @@ class IslandViewModel : ViewModel() {
     var enabledToggles by mutableStateOf(setOf("wifi", "mobile", "rotate"))
         private set
 
+    var unreadMessages by mutableStateOf(1)
+        private set
+
     private var ticker: Job? = null
     private var autoExpand: Job? = null
 
@@ -110,6 +113,7 @@ class IslandViewModel : ViewModel() {
     }
 
     fun incomingMessage() {
+        unreadMessages += 1
         launch(
             IslandContent.Message(
                 sender = "Maya Sharma",
@@ -120,6 +124,7 @@ class IslandViewModel : ViewModel() {
 
     fun replyToMessage() {
         val message = content as? IslandContent.Message ?: return
+        unreadMessages = 0
         content = message.copy(replied = true)
     }
 

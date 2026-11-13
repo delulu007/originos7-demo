@@ -17,7 +17,7 @@ notification access, and no vivo hardware required — it runs on any Android 8.
 | **Music** | Album art, title, animated equalizer, progress, play/pause, previous/next. |
 | **Timer** | Countdown ring, running/paused state, pause, resume and reset. |
 | **Call** | Compact incoming-call pill with accept/decline, plus a connected state with a live call timer. |
-| **Message** | Incoming chat pill with sender and snippet; expands to a card with Reply / Later actions and a "Reply sent" state. |
+| **Message** | Incoming chat pill with sender and snippet; expands to a card with Reply / Later actions and a "Reply sent" state. Unread count feeds the lock-screen badge. |
 | **Charging** | 44W FlashCharge style card with battery percentage and fill animation. |
 | **Morph animation** | Spring-based width/height/corner animation between pill and card. |
 | **Home screen stage** | Mock OriginOS home screen: wallpaper glow, clock, weather/steps widgets, app grid, dock. |
@@ -28,9 +28,11 @@ notification access, and no vivo hardware required — it runs on any Android 8.
 ## Screens and gestures
 
 - **Lock screen** — shown on launch. Swipe up or tap the hint to unlock; the Island Lab's
-  **Lock screen** action returns to it.
+  **Lock screen** action returns to it. The message badge reflects the unread count and
+  clears when you reply from the island.
 - **Home** — live clock, date, weather and step widgets, 12-app grid, glass dock, page dots.
 - **Island** — expands automatically after an activity is triggered, or tap the pill to toggle.
+  Swipe down on it to dismiss the activity and return to the idle pill.
 - **Control Center** — swipe down along the status bar, or tap the small chevron in the
   top-left corner. Swipe up on the panel (or tap the scrim / close button) to dismiss.
 - **Island Lab** — tap the floating **Island Lab** button above the dock.

@@ -1,6 +1,7 @@
 package com.example.originos.island
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
@@ -19,6 +20,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +53,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,12 +65,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 /**
  * The Origin Island: a black capsule that morphs into a live-activity card.
@@ -90,6 +96,7 @@ fun OriginIsland(
     onAccept: () -> Unit,
     onDecline: () -> Unit,
     onReply: () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val targetWidth = when {
@@ -132,8 +139,51 @@ fun OriginIsland(
     )
     val shape = RoundedCornerShape(corner)
     val interaction = remember { MutableInteractionSource() }
+    val scope = rememberCoroutineScope()
+    val dragOffset = remember { Animatable(0f) }
 
-    Box(modifier, contentAlignment = Alignment.TopCenter) {
+    // Swipe the island down to dismiss the current activity.
+    val dismissGesture = if (content is IslandContent.Idle) {
+        Modifier
+    } else {
+        Modifier.pointerInput(Unit) {
+            val threshold = 56.dp.toPx()
+            detectVerticalDragGestures(
+                onDragEnd = {
+                    if (dragOffset.value > threshold) {
+                        scope.launch {
+                            dragOffset.animateTo(
+                                targetValue = size.height * 1.5f,
+                                animationSpec = tween(durationMillis = 180),
+                            )
+                            onDismiss()
+                            dragOffset.snapTo(0f)
+                        }
+                    } else {
+                        scope.launch {
+                            dragOffset.animateTo(
+                                targetValue = 0f,
+                                animationSpec = spring(dampingRatio = 0.8f),
+                            )
+                        }
+                    }
+                },
+                onDragCancel = {
+                    scope.launch {
+                        dragOffset.animateTo(0f, spring(dampingRatio = 0.8f))
+                    }
+                },
+                onVerticalDrag = { change, amount ->
+                    change.consume()
+                    scope.launch {
+                        dragOffset.snapTo((dragOffset.value + amount).coerceAtLeast(0f))
+                    }
+                },
+            )
+        }
+    }
+
+    Box(modifier.then(dismissGesture), contentAlignment = Alignment.TopCenter) {
         // Ambient glow that hints at the accent colour.
         Box(
             Modifier
@@ -151,6 +201,7 @@ fun OriginIsland(
             modifier = Modifier
                 .width(width)
                 .height(height)
+                .graphicsLayer { translationY = dragOffset.value }
                 .shadow(elevation = 24.dp, shape = shape)
                 .clip(shape)
                 .background(

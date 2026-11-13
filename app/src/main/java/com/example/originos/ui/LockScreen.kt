@@ -52,6 +52,7 @@ private val lockDateFormatter = DateTimeFormatter.ofPattern("EEEE, MMM d")
 @Composable
 fun LockScreen(
     accent: Color,
+    unreadMessages: Int,
     onUnlock: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -165,6 +166,8 @@ fun LockScreen(
                 title = "Maya Sharma",
                 body = "Are we still on for dinner at 8?",
                 time = "now",
+                accent = accent,
+                unreadCount = unreadMessages,
             )
             Spacer(Modifier.height(10.dp))
             NotificationCard(
@@ -172,6 +175,7 @@ fun LockScreen(
                 title = "Now playing",
                 body = "Midnight City · M83",
                 time = "2m",
+                accent = accent,
             )
 
             Spacer(Modifier.weight(1f))
@@ -202,6 +206,8 @@ private fun NotificationCard(
     title: String,
     body: String,
     time: String,
+    accent: Color,
+    unreadCount: Int = 0,
 ) {
     Row(
         modifier = Modifier
@@ -240,10 +246,29 @@ private fun NotificationCard(
             )
         }
         Spacer(Modifier.width(8.dp))
-        Text(
-            text = time,
-            color = Color.White.copy(alpha = 0.4f),
-            fontSize = 10.sp,
-        )
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                text = time,
+                color = Color.White.copy(alpha = 0.4f),
+                fontSize = 10.sp,
+            )
+            if (unreadCount > 0) {
+                Spacer(Modifier.height(4.dp))
+                Box(
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clip(CircleShape)
+                        .background(accent),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = unreadCount.toString(),
+                        color = Color(0xFF0A0A0F),
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+        }
     }
 }
